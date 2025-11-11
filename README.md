@@ -47,7 +47,7 @@ This is a brief demo of the functionality of the project
 ### Setup
 To get this repository, run the following command inside your git enabled terminal
 ```bash
-git clone https://github.com/alibigdeli/Django-FBV-DRF-TodoApp
+git clone https://github.com/mehranmohammadiii/Django-FBV-DRF-TodoApp
 ```
 
 ### Getting ready
