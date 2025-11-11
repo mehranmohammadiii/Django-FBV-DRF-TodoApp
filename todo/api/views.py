@@ -27,7 +27,7 @@ def apiOverview(request):
     return Response(api_urls)
 
 
-@permission_classes((IsAuthenticated,))
+# @permission_classes((IsAuthenticated,))
 @api_view(["GET", "POST"])
 def taskList(request):
     """
@@ -38,7 +38,7 @@ def taskList(request):
 
     """
     if request.method == "GET":
-        tasks = Task.objects.filter(user=request.user.pk).order_by("-id")
+        tasks = Task.objects.filter(user=request.user.pk).order_by("id")
         serializers = TaskSerializer(tasks, many=True)
         return Response(serializers.data)
     elif request.method == "POST":
@@ -56,7 +56,7 @@ def taskList(request):
         )
 
 
-@api_view(["GET", "POST", "DELETE"])
+@api_view(["GET", "","PATCH","PUT", "DELETE"])
 @permission_classes((IsAuthenticated,))
 def taskDetail(request, pk):
     task = get_object_or_404(Task, id=pk, user=request.user.pk)
@@ -71,6 +71,15 @@ def taskDetail(request, pk):
         return JsonResponse(
             serializer.errors, status=status.HTTP_400_BAD_REQUEST
         )
+    elif request.method == "PUT" or request.method == "PATCH":
+        partial = True if request.method == "PATCH" else False
+        serializer = TaskSerializer(instance=task, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            # return Response(serializer.data)
+            return JsonResponse(serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == "DELETE":
         task.delete()
         return JsonResponse({"detail": "Task was deleted successfully!"})
